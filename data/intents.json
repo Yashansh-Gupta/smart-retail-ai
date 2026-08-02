@@ -1,0 +1,129 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Hi", "Hello", "Hey", "Good morning", "Good evening", "Is anyone there?", "Greetings"],
+      "responses": ["Hello! Welcome to Smart Retail Customer Support. How can I assist you today?", "Hi there! How can I help with your retail shopping today?"]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["Bye", "See you later", "Goodbye", "Have a good day", "Thanks bye", "Exit"],
+      "responses": ["Thank you for shopping with us! Have a wonderful day.", "Goodbye! Feel free to reach out if you need further help."]
+    },
+    {
+      "tag": "order_status",
+      "patterns": ["Where is my order?", "Track my package", "Order status", "When will my shipment arrive?", "Can I track my delivery?"],
+      "responses": ["You can track your order status by logging into your account under 'My Orders' or entering your order ID on our tracking portal.", "Shipments usually take 2-4 business days. Please check your confirmation email for live tracking link."]
+    },
+    {
+      "tag": "return_policy",
+      "patterns": ["What is your return policy?", "How to return an item?", "Can I return a product within 30 days?", "Return window", "How do returns work?"],
+      "responses": ["We offer a hassle-free 30-day return policy for unused items in original packaging with receipt.", "You can initiate a return from your account portal or bring the item to any retail store."]
+    },
+    {
+      "tag": "store_hours",
+      "patterns": ["What are your store opening hours?", "When do you close?", "Is store open today?", "Business hours", "Weekend opening time"],
+      "responses": ["Our flagship stores are open Monday to Saturday from 9:00 AM to 9:00 PM, and Sunday from 10:00 AM to 6:00 PM.", "Online customer support is available 24/7."]
+    },
+    {
+      "tag": "shipping_costs",
+      "patterns": ["How much is shipping?", "Is shipping free?", "Delivery charges", "Standard delivery cost"],
+      "responses": ["We offer free standard shipping on all orders over $50! Orders under $50 have a flat $4.99 shipping fee.", "Express next-day shipping is available for $12.99."]
+    },
+    {
+      "tag": "payment_methods",
+      "patterns": ["What payment options do you accept?", "Can I pay with PayPal?", "Do you accept credit cards?", "Apple Pay", "Cash on delivery"],
+      "responses": ["We accept Visa, MasterCard, American Express, PayPal, Apple Pay, Google Pay, and store gift cards.", "Cash on delivery is available for select postal codes."]
+    },
+    {
+      "tag": "size_guide",
+      "patterns": ["Where can I find the size chart?", "How do I choose the right size?", "Clothing measurement guide", "Shoe size fit"],
+      "responses": ["Each product page has a 'Size Guide' link right next to the size selector with detailed measurement charts in inches and cm."]
+    },
+    {
+      "tag": "discount_coupons",
+      "patterns": ["Are there any promo codes available?", "Do you offer student discounts?", "Discount code", "Sales and offers"],
+      "responses": ["Sign up for our newsletter to get 15% off your first order! Students get 10% off via StudentBeans verification."]
+    },
+    {
+      "tag": "customer_support",
+      "patterns": ["How do I talk to a human?", "Customer support phone number", "Contact email", "Agent support"],
+      "responses": ["You can call our toll-free line at 1-800-SMART-RETAIL (Mon-Fri 8am-8pm EST) or email support@smartretail.com."]
+    },
+    {
+      "tag": "store_location",
+      "patterns": ["Where are your physical stores?", "Find a store near me", "Store locator", "Branch locations"],
+      "responses": ["Visit smartretail.com/stores to view our store locator map and find the closest branch to your address."]
+    },
+    {
+      "tag": "order_cancellation",
+      "patterns": ["Can I cancel my order?", "How to modify an order?", "Cancel order before shipping", "Stop shipment"],
+      "responses": ["Orders can be canceled within 1 hour of placing them. Go to 'My Orders' -> 'Cancel Item'. After 1 hour, please use the return process upon delivery."]
+    },
+    {
+      "tag": "exchange_policy",
+      "patterns": ["Can I exchange for a different size?", "Item exchange process", "Swap color or size"],
+      "responses": ["Yes! Exchanges for size or color are completely free within 30 days of purchase."]
+    },
+    {
+      "tag": "gift_cards",
+      "patterns": ["Do you sell gift cards?", "How to check gift card balance?", "Redeem gift card", "Buy e-gift card"],
+      "responses": ["Digital e-gift cards from $10 to $500 can be purchased online. You can check your gift card balance during checkout."]
+    },
+    {
+      "tag": "loyalty_program",
+      "patterns": ["What is Smart Rewards?", "How to earn points?", "Loyalty club benefits", "VIP membership"],
+      "responses": ["Smart Rewards lets you earn 1 point per $1 spent. Every 100 points converts to a $5 discount reward on future purchases."]
+    },
+    {
+      "tag": "product_availability",
+      "patterns": ["When will out of stock items restock?", "Is this item available in store?", "Notify when back in stock"],
+      "responses": ["Click 'Notify Me When Available' on any product page to receive an instant email when stock is replenished."]
+    },
+    {
+      "tag": "refund_status",
+      "patterns": ["When will I get my refund?", "How long does refund processing take?", "Money back status"],
+      "responses": ["Once your return package reaches our warehouse, refunds are processed within 3-5 business days to your original payment method."]
+    },
+    {
+      "tag": "account_reset",
+      "patterns": ["I forgot my password", "How to reset login?", "Can't log into account", "Forgot username"],
+      "responses": ["Click 'Forgot Password' on the login screen to receive a secure password reset link in your registered email."]
+    },
+    {
+      "tag": "international_shipping",
+      "patterns": ["Do you ship internationally?", "Global shipping options", "Deliver to UK / Europe / Canada / Asia"],
+      "responses": ["Yes, we ship to over 50 countries worldwide via DHL Express. International shipping fees and duties are calculated at checkout."]
+    },
+    {
+      "tag": "warranty_info",
+      "patterns": ["Do products come with warranty?", "Electronics warranty length", "Defective product replacement"],
+      "responses": ["All electronics and hardware carry a 1-year manufacturer warranty covering manufacturing defects."]
+    },
+    {
+      "tag": "price_matching",
+      "patterns": ["Do you price match competitors?", "Price adjustment policy", "Cheaper elsewhere"],
+      "responses": ["We match lower advertised prices from authorized retail competitors within 14 days of purchase! Contact support with proof."]
+    },
+    {
+      "tag": "feedback_submission",
+      "patterns": ["Where can I leave a product review?", "Submit customer feedback", "Complain about order"],
+      "responses": ["We value your feedback! You can leave reviews directly on product pages or email feedback@smartretail.com."]
+    },
+    {
+      "tag": "bulk_orders",
+      "patterns": ["Do you offer wholesale discount?", "Bulk order inquiries", "Corporate gifting discounts"],
+      "responses": ["For orders over 50 units or corporate gifts, please contact our wholesale sales department at corporate@smartretail.com."]
+    },
+    {
+      "tag": "curbside_pickup",
+      "patterns": ["Is curbside pickup available?", "Click and collect option", "Pick up in store today"],
+      "responses": ["Yes! Select 'Free Store Pickup' at checkout to pick up eligible items within 2 hours at your selected local store."]
+    },
+    {
+      "tag": "track_refund",
+      "patterns": ["Has my return package arrived?", "Tracking return shipment", "Check return status"],
+      "responses": ["Use the return tracking number provided on your return label to track shipping, or check your account under 'Returns'."]
+    }
+  ]
+}
