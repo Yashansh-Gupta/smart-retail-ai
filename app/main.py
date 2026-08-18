@@ -18,7 +18,7 @@ from app.routers import vision, nlp, chatbot
 
 # API Key security scheme for simulated production authorization
 API_KEY_NAME = "X-API-Key"
-DEMO_API_KEY = "retail-secret-key-2026"
+DEMO_API_KEY = os.getenv("API_KEY", "demo-key")
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
 
