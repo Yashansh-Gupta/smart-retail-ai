@@ -18,7 +18,7 @@ from cv_utils import to_grayscale, resize_image, apply_canny_edge_detection, app
 from pipeline import get_pipeline
 
 client = TestClient(app)
-DEMO_KEY = "retail-secret-key-2026"
+DEMO_KEY = os.getenv("API_KEY", "demo-key")
 
 
 def create_dummy_image_bytes(color=(200, 150, 100)) -> bytes:
