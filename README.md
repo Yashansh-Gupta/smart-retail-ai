@@ -1,186 +1,77 @@
-# 🛍️ AI-Powered Smart Retail & Customer Intelligence Platform
+# Smart Retail & Customer Intelligence Platform
 
-An end-to-end, production-grade artificial intelligence platform built for modern physical retail stores and e-commerce businesses. The system recognizes returning loyalty customers via face recognition, classifies product images across 5 categories, performs real-time customer review sentiment analysis, answers FAQs via a hybrid rule/ML chatbot, and exposes everything through a production FastAPI Gateway and interactive Streamlit Dashboard.
+A FastAPI backend that bundles four ML services for a retail use case — face-based repeat-customer recognition, product image classification, review sentiment analysis, and a hybrid rule/ML FAQ chatbot — behind one API, with a Streamlit dashboard for viewing aggregate stats.
 
----
+I built this to practice wiring several independent ML models into a single deployable service, rather than training a model in a notebook and stopping there.
 
-## 📌 Syllabus-to-Module Mapping Table
+## What it does
 
-| Syllabus Topic | Project Module | Implementation File |
-| :--- | :--- | :--- |
-| **OpenCV Basics** | Image preprocessing, Canny edge detection, Haar cascades | `cv_utils.py` |
-| **Image Classification** | Product category classifier (shoes, bags, electronics, clothing, groceries) | `app/services/cv_service.py`, `product_classifier.h5` |
-| **Face Recognition** | Customer recognition & visit logging pipeline | `face_recognition_module.py`, `face_db.pkl` |
-| **Text Preprocessing** | Text cleaning, tokenization, stopword removal, lowercasing | `app/services/nlp_service.py` |
-| **Sentiment Analysis** | Customer review/feedback sentiment classifier (TF-IDF + LogisticRegression) | `app/models/sentiment_model.pkl` |
-| **Chatbot Basics** | FAQ/support hybrid chatbot (rule-based regex + ML classifier) | `app/services/chatbot_service.py`, `intents.json` |
-| **ML Pipelines** | Unified pipeline loading all models once at startup | `pipeline.py` |
-| **Pickle / Joblib** | Model serialization & database persistence | `train_all_models.py`, `.pkl` / `.h5` |
-| **FastAPI REST API** | REST API gateway serving all model endpoints | `app/main.py`, `app/routers/` |
-| **API Deployment** | Dockerized deployment & CI/CD workflow | `Dockerfile`, `.github/workflows/deploy.yml` |
+- **Face recognition** — recognizes a returning customer from a photo and logs the visit.
+- **Product classification** — classifies a product image into one of 5 categories (shoes, bags, electronics, clothing, groceries).
+- **Sentiment analysis** — scores customer review text as positive/negative using a TF-IDF + logistic regression pipeline.
+- **FAQ chatbot** — answers common retail questions using a rule-based layer backed by an ML intent classifier for anything the rules don't cover.
+- **Dashboard** — a Streamlit view of aggregate visit and sentiment stats pulled from the same API.
 
----
+## Architecture
 
-## 🏗️ System Architecture
-
-```mermaid
-flowchart TD
-    Client[Client Layer\nDashboard / Postman / Webcam Feed] -->|REST Calls| Gateway[FastAPI Gateway\napp/main.py]
-
-    subgraph API Gateway Endpoints
-        Gateway --> EP1["POST /recognize-face"]
-        Gateway --> EP2["POST /classify-product"]
-        Gateway --> EP3["POST /analyze-sentiment"]
-        Gateway --> EP4["POST /chatbot"]
-        Gateway --> EP5["GET /dashboard/stats"]
-    end
-
-    subgraph Unified ML Pipeline [pipeline.py]
-        EP1 & EP2 --> CV[CV Module\nOpenCV capture / Face encodings / Product Classifier]
-        EP3 --> NLP[NLP Module\nText cleaning / TF-IDF / Sentiment model]
-        EP4 --> Bot[Chatbot Module\nRule-based regex + ML intent classifier]
-        EP5 --> Stats[Analytics Aggregator]
-    end
-
-    subgraph Model & Data Storage
-        CV --> DB1[(face_db.pkl)]
-        CV --> DB2[(product_classifier.h5)]
-        NLP --> DB3[(sentiment_model.pkl)]
-        Bot --> DB4[(chatbot_model.pkl)]
-        Bot --> DB5[(data/intents.json)]
-    end
-```
-
----
-
-## 📂 Project Directory Structure
+All four models are loaded once at startup (`pipeline.py`) and served through a single FastAPI app (`app/main.py`), with each capability split into its own router and service module:
 
 ```
-smart-retail-ai/
-├── app/
-│   ├── main.py                       # FastAPI entrypoint, security header & middleware
-│   ├── schemas.py                    # Pydantic request/response schemas
-│   ├── routers/
-│   │   ├── vision.py                 # POST /recognize-face, POST /classify-product
-│   │   ├── nlp.py                    # POST /analyze-sentiment
-│   │   └── chatbot.py                # POST /chatbot, GET /dashboard/stats
-│   ├── models/
-│   │   ├── product_classifier.h5     # Serialized product classifier model
-│   │   ├── face_db.pkl               # Serialized face encodings & customer DB
-│   │   ├── sentiment_model.pkl       # Serialized TF-IDF + Sentiment pipeline
-│   │   └── chatbot_model.pkl         # Serialized TF-IDF + Intent classifier pipeline
-│   └── services/
-│       ├── cv_service.py             # Computer Vision service layer
-│       ├── nlp_service.py            # Text preprocessing & sentiment service
-│       └── chatbot_service.py        # Hybrid rule + ML chatbot service
-├── cv_utils.py                       # Standalone OpenCV utilities (Canny, Haar cascades, resize)
-├── face_recognition_module.py        # Face detection, encodings & timestamped visit logger
-├── pipeline.py                       # Unified ML Pipeline loading models once at startup
-├── dashboard.py                      # Interactive Streamlit analytics dashboard
-├── notebooks/
-│   ├── 01_image_classifier_training.ipynb
-│   ├── 02_face_recognition_setup.ipynb
-│   └── 03_sentiment_model_training.ipynb
-├── data/
-│   ├── reviews.csv                   # Retail review sentiment dataset
-│   └── intents.json                  # Custom FAQ intents (25+ retail customer intents)
-├── tests/
-│   └── test_endpoints.py             # Pytest suite for all REST endpoints & services
-├── Dockerfile                        # Multi-stage production Docker container definition
-├── requirements.txt                  # Python dependencies
-├── train_all_models.py               # Model training & serialization script
-├── README.md                         # Project documentation & ethics report
-└── .github/workflows/deploy.yml      # GitHub Actions CI/CD workflow
+app/
+├── main.py                  # FastAPI entrypoint
+├── routers/                 # vision.py, nlp.py, chatbot.py — one router per capability
+├── services/                 # cv_service.py, nlp_service.py, chatbot_service.py
+└── models/                   # serialized model files (.h5 / .pkl)
+cv_utils.py                   # OpenCV preprocessing helpers
+face_recognition_module.py    # face encoding + visit logging
+pipeline.py                   # loads all models once, shared across requests
+dashboard.py                  # Streamlit dashboard
+notebooks/                    # training notebooks for each model
+train_all_models.py           # trains and serializes all four models
+tests/test_endpoints.py       # endpoint tests (pytest)
 ```
 
----
+## API
 
-## 🚀 Quick Start & Installation
+| Method | Endpoint | What it does |
+|---|---|---|
+| POST | `/recognize-face` | Identify a returning customer from an image |
+| POST | `/classify-product` | Classify a product image (5 categories) |
+| POST | `/analyze-sentiment` | Score review text as positive/negative |
+| POST | `/chatbot` | Get a response from the hybrid FAQ chatbot |
+| GET | `/dashboard/stats` | Aggregate visit + sentiment stats |
 
-### ⚡ 1-Click Launch (Recommended for Windows)
-Simply double-click **[`START_PLATFORM.cmd`](file:///C:/Users/yasha/.gemini/antigravity/scratch/smart-retail-ai/START_PLATFORM.cmd)** inside the project folder!
-- It automatically launches both FastAPI (Port 8000) and Streamlit Dashboard (Port 8501) in separate windows.
-- It opens your web browser tabs automatically.
-- To stop everything with 1-click, double-click **[`STOP_PLATFORM.cmd`](file:///C:/Users/yasha/.gemini/antigravity/scratch/smart-retail-ai/STOP_PLATFORM.cmd)**.
+## Running it
 
----
-
-### Manual Launch Steps
 ```bash
-git clone https://github.com/your-org/smart-retail-ai.git
+git clone https://github.com/<your-username>/smart-retail-ai.git
 cd smart-retail-ai
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
+python -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+
+python train_all_models.py          # train + serialize the 4 models
+uvicorn app.main:app --reload --port 8000   # API + Swagger docs at /docs
+streamlit run dashboard.py          # dashboard at localhost:8501
+pytest tests/test_endpoints.py -v   # run the test suite
 ```
 
-### 2. Train & Serialize All Models
+Also includes a `Dockerfile` for containerized deployment:
 ```bash
-python train_all_models.py
+docker build -t smart-retail-ai .
+docker run -d -p 8000:8000 smart-retail-ai
 ```
 
-### 3. Run FastAPI Backend Server
-```bash
-uvicorn app.main:app --reload --port 8000
-```
-- Interactive Swagger API Docs: `http://localhost:8000/docs`
-- ReDoc API Documentation: `http://localhost:8000/redoc`
+## A note on face recognition
 
-### 4. Run Streamlit Interactive Dashboard
-```bash
-streamlit run dashboard.py
-```
-Access dashboard in your browser at `http://localhost:8501`.
+Face recognition raises real privacy questions, so worth stating plainly: this is a learning project, not a production system, and the current implementation stores face encodings locally with no consent flow, encryption, or bias auditing built in. A real deployment would need explicit opt-in consent, encrypted storage of encodings (never raw images), a deletion mechanism, and regular fairness testing across demographics before it could be used on real customers.
 
-### 5. Run Automated Test Suite
-```bash
-pytest tests/test_endpoints.py -v
-```
+## What I'd improve next
 
----
+- Add authentication to the API endpoints (currently open)
+- Replace the on-disk pickle/h5 model storage with a proper model registry
+- Add CI test coverage beyond the current endpoint smoke tests
+- Move face encodings to encrypted storage with a consent + deletion flow
 
-## 🐳 Docker Deployment
+## Tech stack
 
-### Build & Run Container
-```bash
-# Build Docker image
-docker build -t smart-retail-ai:latest .
-
-# Run Docker container
-docker run -d -p 8000:8000 --name retail-app smart-retail-ai:latest
-```
-
----
-
-## 📡 API Endpoints Overview
-
-| Method | Endpoint | Description | Sample Payload / Input |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/recognize-face` | Recognizes returning customer from image & logs visit | `multipart/form-data` image file |
-| `POST` | `/classify-product` | Classifies product image into 5 retail categories | `multipart/form-data` image file |
-| `POST` | `/analyze-sentiment` | Classifies customer review sentiment | `{"text": "Love this handbag!"}` |
-| `POST` | `/chatbot` | Returns hybrid automated chatbot reply | `{"message": "What is return policy?"}` |
-| `GET` | `/dashboard/stats` | Returns aggregate visit & sentiment statistics | `None` |
-
----
-
-## 📜 Ethics, Data Privacy & Bias Report: Facial Recognition in Retail
-
-> [!IMPORTANT]
-> Facial recognition technology in retail stores offers significant convenience and personalization for loyalty members, but requires strict adherence to legal and ethical frameworks.
-
-### 1. User Consent & Opt-In Framework
-- **Explicit Informed Consent:** Facial recognition MUST operate strictly on an opt-in basis for consenting loyalty program members. Customers must actively register via the mobile app or store kiosk after reviewing clear terms.
-- **Right to Erasure (GDPR/CCPA):** Customers must have an immediate mechanism to delete their facial template vector from `face_db.pkl` at any time.
-
-### 2. Biometric Data Security & Encryption
-- **No Raw Image Storage:** Store ONLY non-reversible 128D mathematical feature encodings vector representations, never raw facial photographic images.
-- **Encryption at Rest & in Transit:** Facial database files must be encrypted with AES-256 encryption and accessible only by secure local store gateway nodes.
-
-### 3. Algorithmic Bias & Fairness Mitigation
-- **Demographic Parity Audits:** Facial recognition models must be regularly evaluated across diverse age groups, skin tones, and gender identities using benchmark datasets (e.g., FairFace) to maintain equal recognition accuracy and prevent disproportionate false rejection rates.
-- **Human-in-the-Loop Safeguards:** Automated facial identification must never trigger automatic security interventions without human verification by trained retail personnel.
+Python, FastAPI, OpenCV, scikit-learn, Streamlit, Docker, pytest
